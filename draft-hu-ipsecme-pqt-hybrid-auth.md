@@ -49,9 +49,9 @@ author:
     organization: Nokia
     email: jun.hu@nokia.com
  -
-    fullname: Yasushi Morioka 
-    organization: 
-    email: 
+    fullname: Yasushi Morioka
+    organization:
+    email:
 
 
 normative:
@@ -64,7 +64,7 @@ normative:
   RFC9593:
   X.690:
     title: "Information Technology - ASN.1 encoding rules: Specification of Basic Encoding Rules (BER), Canonical Encoding Rules (CER) and Distinguished Encoding Rules (DER)"
-    seriesinfo: 
+    seriesinfo:
       ISO/IEC: 8825-1:2021 (E)
       ITU-T: Recommendation X.690
     date: Feb.2021
@@ -83,13 +83,13 @@ informative:
   QRPKI:
     title: Transitioning to a Quantum-Resistant Public Key Infrastructure
     author:
-      - 
+      -
        name: Nina Bindel
-      - 
+      -
        name: Udyani Herath
-      - 
+      -
        name: Mattew McKague
-      - 
+      -
        name: Douglas Stebila
     date: 2017
     target: https://eprint.iacr.org/2017/460
@@ -103,7 +103,7 @@ informative:
 
 --- abstract
 
- One IPsec area that would be impacted by Cryptographically Relevant Quantum Computer (CRQC) is IKEv2 authentication based on classic asymmetric cryptograph algorithms: e.g RSA, ECDSA; There are new Post-Quantum Cryptograph (PQC) algorithms for digital signature like NIST {{ML-DSA}}, however it takes time for new cryptograph algorithms to mature, so there is security risk to use only the new algorithm before it is field proven. This document describes a IKEv2 hybrid authentication scheme that could contain both classic and PQC algorithms, so that authentication is secure as long as one algorithm in the hybrid scheme is secure. 
+ One IPsec area that would be impacted by Cryptographically Relevant Quantum Computer (CRQC) is IKEv2 authentication based on classic asymmetric cryptograph algorithms: e.g RSA, ECDSA; There are new Post-Quantum Cryptograph (PQC) algorithms for digital signature like NIST {{ML-DSA}}, however it takes time for new cryptograph algorithms to mature, so there is security risk to use only the new algorithm before it is field proven. This document describes a IKEv2 hybrid authentication scheme that could contain both classic and PQC algorithms, so that authentication is secure as long as one algorithm in the hybrid scheme is secure.
 
 
 --- middle
@@ -157,7 +157,7 @@ The hybrid authentication exchanges is illustrated in an example depicted in {{h
 
 ## Announcement
 
-Both peers includes SIGNATURE_HASH_ALGORITHMS as defined in {{Section 4 of RFC7427}} notification in IKE_SA_INIT exchange to indicate supported hash algorithms used with digital signature. 
+Both peers includes SIGNATURE_HASH_ALGORITHMS as defined in {{Section 4 of RFC7427}} notification in IKE_SA_INIT exchange to indicate supported hash algorithms used with digital signature.
 
 Responder includes SUPPORTED_AUTH_METHODS as defined in {{RFC9593}} notification include a list of supported authentication methods announcements includes a hybrid authentication announcements with following format:
 
@@ -256,7 +256,7 @@ The signing certificate MAY contain RelatedCertificate extension, then the recei
 ## Certificate with Composite Keys
 So far, this document assumes the signing certificate contains a key of single algorithm, however there might be certificate with composite key as define in {{I-D.ietf-lamps-pq-composite-sigs}}, in such case, AUTH payload is created with same procedure in {{auth-payload}}:
 
-* Sig1 and Sig2 are specified by the signing certificate 
+* Sig1 and Sig2 are specified by the signing certificate
 
 Supported composite signature algorithms are announced via SUPPORTED_AUTH_METHODS notification with 3-Octet announcement as defined in {{Section 3.2.2 of RFC9593}}.
 
