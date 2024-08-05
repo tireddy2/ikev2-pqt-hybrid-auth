@@ -23,7 +23,7 @@ title: "Post-Quantum Traditional (PQ/T) Hybrid Authentication in the Internet Ke
 abbrev: "IKEv2 PQTH Auth"
 category: std
 
-docname: draft-hu-ipsecme-pqt-hybrid-auth-00
+docname: draft-hu-ipsecme-pqt-hybrid-auth-latest
 submissiontype: IETF  # also: "independent", "editorial", "IAB", or "IRTF"
 number:
 date:
@@ -112,7 +112,7 @@ informative:
 
 A Cryptographically Relevant Quantum Computer (CRQC) could break classic asymmetric cryptograph algorithms: e.g RSA, ECDSA; which are widely deployed authentication options of IKEv2. New Post-Quantum Cryptograph (PQC) algorithms for digital signature are being standardized at the time of writing like NIST {{ML-DSA}}, however consider potential flaws in the new algorithm's specifications and implementations, it will take sometime for these new PQC algorithms to be field proven. so it is risky to only use PQC algorithms before they are mature. There is more detailed discussion on motivation of a hybrid approach for authentication in {{Section 1.3 of I-D.ietf-pquip-hybrid-signature-spectrums}}.
 
-This document describes a IKEv2 hybrid authentication scheme that contains both classic and PQC algorithms, so that authentication is secure as long as one algorithm in the hybrid scheme is secure. 
+This document describes a IKEv2 hybrid authentication scheme that contains both classic and PQC algorithms, so that authentication is secure as long as one algorithm in the hybrid scheme is secure.
 
 
 
@@ -122,7 +122,7 @@ This document describes a IKEv2 hybrid authentication scheme that contains both 
 
 Cryptographically Relevant Quantum Computer (CRQC): A quantum computer that is capable of breaking real world cryptographic systems.
 
-Post-Quantum Cryptograph (PQC) algorithms: Asymmetric cryptograph algorithms are thought to be secure against CRQC. 
+Post-Quantum Cryptograph (PQC) algorithms: Asymmetric cryptograph algorithms are thought to be secure against CRQC.
 
 Traditional Cryptograph algorithms: Existing asymmetric cryptograph algorithms could be broken by CRQC, like RSA, ECDSA ..etc.
 
@@ -140,10 +140,10 @@ The hybrid authentication exchanges is illustrated in an example depicted in {{h
 ~~~~~~~~~~~
    Initiator                         Responder
    -------------------------------------------------------------------
-   HDR, SAi1, KEi, Ni, 
+   HDR, SAi1, KEi, Ni,
         N(SIGNATURE_HASH_ALGORITHMS), N(USE_PPK) -->
                                 <--  HDR, SAr1, KEr, Nr, [CERTREQ,] N(USE_PPK),
-                                         N(SIGNATURE_HASH_ALGORITHMS), 
+                                         N(SIGNATURE_HASH_ALGORITHMS),
                                          N(SUPPORTED_AUTH_METHODS)
 
    HDR, SK {IDi, CERT+, [CERTREQ,]
@@ -152,16 +152,14 @@ The hybrid authentication exchanges is illustrated in an example depicted in {{h
             N(SUPPORTED_AUTH_METHODS)} -->
                                 <--  HDR, SK {IDr, CERT+, [CERTREQ,]
                                          AUTH, [N(PPK_IDENTITY)]}
-  
 ~~~~~~~~~~~
 {: #hybrid-auth-figure title="Hybrid Authentication Exchanges with RFC8784 Key Exchange"}
 
-## Announcement 
+## Announcement
 
 Both peers includes SIGNATURE_HASH_ALGORITHMS as defined in {{Section 4 of RFC7427}} notification in IKE_SA_INIT exchange to indicate supported hash algorithms used with digital signature. 
 
-Responder includes SUPPORTED_AUTH_METHODS as defined in {{RFC9593}} notification include a list of supported authentication methods announcements includes a hybrid authentication announcements with following format: 
-
+Responder includes SUPPORTED_AUTH_METHODS as defined in {{RFC9593}} notification include a list of supported authentication methods announcements includes a hybrid authentication announcements with following format:
 
 
                         1                   2                   3
@@ -194,9 +192,9 @@ The announcement include a list algorithms could be used for hybrid signature
 
 * Auth Method: A new value to be allocated by IANA
 * Cert Link N: Links corresponding signature algorithm N with a particular CA. as defined in {{Section 3.2.2 of RFC9593}}
-* AlgorithmIdentifier N: The variable-length ASN.1 object that is encoded using Distinguished Encoding Rules (DER) {{X.690}} and identifies the signature algorithm; 
+* AlgorithmIdentifier N: The variable-length ASN.1 object that is encoded using Distinguished Encoding Rules (DER) {{X.690}} and identifies the signature algorithm;
 
-Receiver of this announcement could choose one PQC algorithm and one traditional algorithm from the list to create the hybrid signature. 
+Receiver of this announcement could choose one PQC algorithm and one traditional algorithm from the list to create the hybrid signature.
 
 Initiator also includes SUPPORTED_AUTH_METHODS notification in IKE_AUTH request message to announce its support of hybrid authentication.
 
@@ -245,19 +243,19 @@ The Authentication Data field follows format defined in {{Section 3 of RFC7427}}
 The Signature Value is created via following procedure:
 
 1. Choose a hash algorithm H from peer's SIGNATURE_HASH_ALGORITHMS, a PQC algorithm Sig1 and a traditional algorithm Sig2 from peer's hybrid authentication method announcement;
-2. Follow the procedure defined in {{Section 4.2 of I-D.ietf-lamps-pq-composite-sigs}}, where the domain separator is the value in {{Section 7.1 of I-D.ietf-lamps-pq-composite-sigs}} correspond to the combination of Sig1, Sig2 and H. 
+2. Follow the procedure defined in {{Section 4.2 of I-D.ietf-lamps-pq-composite-sigs}}, where the domain separator is the value in {{Section 7.1 of I-D.ietf-lamps-pq-composite-sigs}} correspond to the combination of Sig1, Sig2 and H.
 
 
 The domain separator is also used as AlgorithmIdentifier in the Authentication Data.
 
-The corresponding certificates of Sig1 and Sig2 MUST be put in the first and second CERT payload, in the order, of the message; 
+The corresponding certificates of Sig1 and Sig2 MUST be put in the first and second CERT payload, in the order, of the message;
 
 ## RelatedCertificate
 The signing certificate MAY contain RelatedCertificate extension, then the receiver SHOULD verify the extension according to {{Section 4.2 of I-D.ietf-lamps-cert-binding-for-multi-auth}}, failed verification SHOULD fail authentication.
 
 ## Certificate with Composite Keys
 So far, this document assumes the signing certificate contains a key of single algorithm, however there might be certificate with composite key as define in {{I-D.ietf-lamps-pq-composite-sigs}}, in such case, AUTH payload is created with same procedure in {{auth-payload}}:
-    
+
 * Sig1 and Sig2 are specified by the signing certificate 
 
 Supported composite signature algorithms are announced via SUPPORTED_AUTH_METHODS notification with 3-Octet announcement as defined in {{Section 3.2.2 of RFC9593}}.
@@ -267,9 +265,9 @@ Supported composite signature algorithms are announced via SUPPORTED_AUTH_METHOD
 
 # Security Considerations
 
-The security of general PQ/T hybrid authentication is discussed in {{I-D.ietf-pquip-hybrid-signature-spectrums}}. 
+The security of general PQ/T hybrid authentication is discussed in {{I-D.ietf-pquip-hybrid-signature-spectrums}}.
 
-This document uses mechanisms defined in {{RFC7427}} and {{RFC9593}}, the security discussion in the corresponding RFCs also apply. 
+This document uses mechanisms defined in {{RFC7427}} and {{RFC9593}}, the security discussion in the corresponding RFCs also apply.
 
 
 # IANA Considerations
