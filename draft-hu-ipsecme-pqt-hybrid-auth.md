@@ -70,11 +70,11 @@ normative:
     date: Feb.2021
 
 informative:
-  
+
   ML-DSA:
     title: Module-Lattice-Based Digital Signature Standard
     date: Aug.2023
-    seriesinfo: 
+    seriesinfo:
       NIST: FIPS-204
       State: Initial Public Draft
     target: https://csrc.nist.gov/pubs/fips/204/ipd
