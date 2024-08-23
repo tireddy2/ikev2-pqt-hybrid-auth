@@ -49,9 +49,9 @@ author:
     organization: Nokia
     email: jun.hu@nokia.com
  -
-    fullname: Yasushi Morioka
-    organization:
-    email:
+    fullname: Yasufumi Morioka
+    organization: NTT DOCOMO, INC.
+    email: yasufumi.morioka.dt@nttdocomo.com
 
 
 normative:
@@ -103,14 +103,14 @@ informative:
 
 --- abstract
 
- One IPsec area that would be impacted by Cryptographically Relevant Quantum Computer (CRQC) is IKEv2 authentication based on classic asymmetric cryptograph algorithms: e.g RSA, ECDSA; There are new Post-Quantum Cryptograph (PQC) algorithms for digital signature like NIST {{ML-DSA}}, however it takes time for new cryptograph algorithms to mature, so there is security risk to use only the new algorithm before it is field proven. This document describes a IKEv2 hybrid authentication scheme that could contain both classic and PQC algorithms, so that authentication is secure as long as one algorithm in the hybrid scheme is secure.
+ One IPsec area that would be impacted by Cryptographically Relevant Quantum Computer (CRQC) is IKEv2 authentication based on classic asymmetric cryptograph algorithms: e.g RSA, ECDSA; which are widely deployed authentication options of IKEv2. There are new Post-Quantum Cryptograph (PQC) algorithms for digital signature like NIST {{ML-DSA}}, however it takes time for new cryptograph algorithms to mature, so there is security risk to use only the new algorithm before it is field proven. This document describes a IKEv2 hybrid authentication scheme that could contain both classic and PQC algorithms, so that authentication is secure as long as one algorithm in the hybrid scheme is secure.
 
 
 --- middle
 
 # Introduction
 
-A Cryptographically Relevant Quantum Computer (CRQC) could break classic asymmetric cryptograph algorithms: e.g RSA, ECDSA; which are widely deployed authentication options of IKEv2. New Post-Quantum Cryptograph (PQC) algorithms for digital signature are being standardized at the time of writing like NIST {{ML-DSA}}, however consider potential flaws in the new algorithm's specifications and implementations, it will take sometime for these new PQC algorithms to be field proven. so it is risky to only use PQC algorithms before they are mature. There is more detailed discussion on motivation of a hybrid approach for authentication in {{Section 1.3 of I-D.ietf-pquip-hybrid-signature-spectrums}}.
+A Cryptographically Relevant Quantum Computer (CRQC) could break classic asymmetric cryptograph algorithms: e.g RSA, ECDSA; which are widely deployed authentication options of IKEv2. New Post-Quantum Cryptograph (PQC) algorithms for digital signature are being standardized at the time of writing like NIST {{ML-DSA}}, however consider potential flaws in the new algorithm's specifications and implementations, it will take time for these new PQC algorithms to be field proven. So it is risky to only use PQC algorithms before they are mature. There is more detailed discussion on motivation of a hybrid approach for authentication in {{Section 1.3 of I-D.ietf-pquip-hybrid-signature-spectrums}}.
 
 This document describes a IKEv2 hybrid authentication scheme that contains both classic and PQC algorithms, so that authentication is secure as long as one algorithm in the hybrid scheme is secure.
 
