@@ -23,7 +23,7 @@ title: "Post-Quantum Traditional (PQ/T) Hybrid Authentication in the Internet Ke
 abbrev: "IKEv2 PQTH Auth"
 category: std
 
-docname: draft-hu-ipsecme-pqt-hybrid-auth-latest
+docname: draft-hu-ipsecme-pqt-hybrid-auth-00
 submissiontype: IETF  # also: "independent", "editorial", "IAB", or "IRTF"
 number:
 date:
@@ -48,10 +48,12 @@ author:
     fullname: Hu, Jun
     organization: Nokia
     email: jun.hu@nokia.com
+    country: United States of America
  -
     fullname: Yasufumi Morioka
     organization: NTT DOCOMO, INC.
     email: yasufumi.morioka.dt@nttdocomo.com
+    country: Japan
 
 
 normative:
