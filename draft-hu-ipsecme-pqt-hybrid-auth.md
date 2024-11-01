@@ -94,6 +94,15 @@ informative:
 
 --- middle
 
+# Changes in -01
+
+* Only use SUPPORTED_AUTH_METHODS for algorithm combination announcement, no longer use SIGNATURE_HASH_ALGORITHMS
+* add flag field in the announcement
+* clarify two types of PKI setup
+* add some clarifications on how AUTH payload is computed
+
+
+
 # Introduction
 
 A Cryptographically Relevant Quantum Computer (CRQC) could break traditional asymmetric cryptograph algorithms: e.g RSA, ECDSA; which are widely deployed authentication options of IKEv2. New Post-Quantum Cryptograph (PQC) algorithms for digital signature were recently published like NIST {{ML-DSA}}, however consider potential flaws in the new algorithm's specifications and implementations, it will take time for these new PQC algorithms to be field proven. So it is risky to only use PQC algorithms before they are mature. There is more detailed discussion on motivation of a hybrid approach for authentication in {{Section 1.3 of I-D.ietf-pquip-hybrid-signature-spectrums}}.
