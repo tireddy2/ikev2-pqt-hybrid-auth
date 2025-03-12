@@ -19,7 +19,7 @@
 # Change the file extension to match the format (.xml for XML, etc...)
 #
 ###
-title: "Post-Quantum Traditional (PQ/T) Hybrid Authentication in the Internet Key Exchange Version 2 (IKEv2)"
+title: "Post-Quantum Traditional (PQ/T) Hybrid PKI Authentication in the Internet Key Exchange Version 2 (IKEv2)"
 abbrev: "IKEv2 PQTH Auth"
 category: std
 
@@ -54,12 +54,19 @@ author:
     organization: NTT DOCOMO, INC.
     email: yasufumi.morioka.dt@nttdocomo.com
     country: Japan
+ -
+    fullname: Wang, Guilin
+    organization: Huawei
+    email: Wang.Guilin@huawei.com
+    country: Singapore
+
 
 
 normative:
   I-D.ietf-lamps-pq-composite-sigs:
   I-D.ietf-pquip-hybrid-signature-spectrums:
   I-D.ietf-lamps-cert-binding-for-multi-auth:
+  I-D.ietf-lamps-dilithium-certificates:
   RFC7296:
   RFC7427:
   RFC9593:
@@ -94,6 +101,13 @@ informative:
 
 --- middle
 
+# Change in -02
+
+* clarify the approach in the document is general
+* dropping support for PreHash ML-DSA, change example to Pure Signature ML-DSA
+* adding more details in signing process to align with ietf-lamps-pq-composite-sigs-04
+* add text in Security Considerations to emphasize prohibit of key reuse
+
 # Changes in -01
 
 * Only use SUPPORTED_AUTH_METHODS for algorithm combination announcement, no longer use SIGNATURE_HASH_ALGORITHMS
@@ -110,6 +124,8 @@ A Cryptographically Relevant Quantum Computer (CRQC) could break traditional asy
 This document describes an IKEv2 hybrid authentication scheme that contains both traditional and PQC algorithms, so that authentication is secure as long as one algorithm in the hybrid scheme is secure.
 
 Each IPsec peer announce the support of hybrid authentication via SUPPORTED_AUTH_METHODS notification as defined in {{RFC9593}}, generates and verifies AUTH payload using composite signature like the procedures defined in {{I-D.ietf-lamps-pq-composite-sigs}}.
+
+While only ML-DSA is specified as the PQC algorithm, the approach in this document could be a general framework that for all PQC and traditional algorithms.
 
 Following two types of setup are covered:
 
@@ -163,7 +179,7 @@ Announcement of support hybrid authentication is through SUPPORTED_AUTH_METHODS 
                          1                   2                   3
      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |  Length (>3)  |  Auth Method  |   Cert Link 1 | Alg 1 flag    |
+    |  Length (>=2) |  Auth Method  |   Cert Link 1 | Alg 1 flag    |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     | Alg 1 Len     |                                               |
     +-+-+-+-+-+-+-+-+                                               |
@@ -270,21 +286,24 @@ The Authentication Data field follows format defined in {{Section 3 of RFC7427}}
 
 Based on selected AlgorithmIdentifier and setup type, the Signature Value is created via procedure defined in {{type-1}}, {{type-2}}.
 
+
 ### Type-1
 Assume selected AlgorithmIdentifier is A.
 
 1. There is no change on data to be signed, e.g. InitiatorSignedOctets/ResponderSignedOctets as defined in {{Section 2.15 of RFC7296}}
-2. Follow Sign operation identified by A, e.g. {{Section 4.2.1 of I-D.ietf-lamps-pq-composite-sigs}} or {{Section 4.3.1 of I-D.ietf-lamps-pq-composite-sigs}}; the ctx input is the string of "IKEv2-PQT-Hybrid-Auth".
+2. Follow Sign operation identified by A, e.g. {{Section 4.2.1 of I-D.ietf-lamps-pq-composite-sigs}}. the ctx input is the string of "IKEv2-PQT-Hybrid-Auth". this step outputs the composite signature, a CompositeSignatureValue.
+3. CompositeSignatureValue is serialized per {{Section 4.5 of I-D.ietf-lamps-pq-composite-sigs}}, the output is used as Signature Value in the Authentication Data field.
+
+note: in case ML-DSA, only pure signature mode as defined in {{Section 4.2 of I-D.ietf-lamps-pq-composite-sigs}} is used, the PreHash ML-DSA mode MUST NOT be used, see {{Section 8.1 of I-D.ietf-lamps-dilithium-certificates}} for the rationale.
 
 Following is an initiator example:
 
-1. A is id-HashMLDSA44-RSA2048-PSS-SHA256, which uses Hash ML-DSA-44
-2. Follow {{Section 4.3.1 of I-D.ietf-lamps-pq-composite-sigs}} with following input:
+1. A is id-MLDSA44-RSA2048-PSS, which uses pure signature mode id-ML-DSA-44 and id-RSASSA-PSS with id-sha256
+2. Follow {{Section 4.2.1 of I-D.ietf-lamps-pq-composite-sigs}} with following input:
 
     - sk is the private key of the signing composite key certificate
     - M is InitiatorSignedOctets
     - ctx is "IKEv2-PQT-Hybrid-Auth"
-    - PH is SHA256
 
 
 The signing composite certificate MUST be the first CERT payload.
@@ -298,7 +317,6 @@ With the example in {{type-1}}:
   - mldsaSK is the private key of ML-DSA certificate, tradSK is the private key of the RSA certificate
   - M is InitiatorSignedOctets
   - ctx is "IKEv2-PQT-Hybrid-Auth"
-  - PH is SHA256
 
 The signing PQC certificate MUST be the first CERT payload in the IKEv2 message, while traditional certificate MUST be the second CERT payload.
 
@@ -313,6 +331,8 @@ In type-2 setup, the signing certificate MAY contain RelatedCertificate extensio
 The security of general PQ/T hybrid authentication is discussed in {{I-D.ietf-pquip-hybrid-signature-spectrums}}.
 
 This document uses mechanisms defined in {{I-D.ietf-lamps-pq-composite-sigs}}, {{RFC7427}} and {{RFC9593}}, the security discussion in the corresponding RFCs also apply.
+
+One important security consideration mentioned in {{I-D.ietf-lamps-pq-composite-sigs}} worth repeating here is that component key used in either {{type-1}} or {{type-2}} MUST NOT be reused in any other cases including single-algorithm case.
 
 
 # IANA Considerations
