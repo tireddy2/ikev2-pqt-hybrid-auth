@@ -2,7 +2,7 @@
 ###
 # Internet-Draft Markdown Template
 #
-# Rename this file from draft-todo-yourname-protocol.md to get started.
+# Rename this file from draft-todo-yourname-protocol.md to get started. 
 # Draft name format is "draft-<yourname>-<workgroup>-<name>.md".
 #
 # For initial setup, you only need to edit the first block of fields.
@@ -127,15 +127,13 @@ A Cryptographically Relevant Quantum Computer (CRQC) could break traditional asy
 
 This document describes an IKEv2 hybrid authentication scheme that contains both traditional and PQC algorithms, so that authentication is secure as long as one algorithm in the hybrid scheme is secure.
 
-Each IPsec peer announces the support of hybrid authentication via SUPPORTED_AUTH_METHODS notification as defined in {{RFC9593}}, generates and verifies AUTH payload using composite signature like the procedures defined in {{I-D.ietf-lamps-pq-composite-sigs}}.
-
 The approach in this document could be a general framework that for all PQC and traditional algorithms, the combinations of ML-DSA variants and traditional algorithms are considered as instantiations of the general framework.
 
 Following two types of setup are covered in the draft:
 
-1. Composit certificate: A single certificate containing a composite key, as defined in {{I-D.ietf-lamps-pq-composite-sigs}}.
+1. Composit certificate: A single certificate containing a composite key and signature, as defined in {{I-D.ietf-lamps-pq-composite-sigs}}.
 
-2. Dual certificates: one with a traditional algorithm key and one with a PQC algorithm key. This method exemplifies a PQ/T hybrid protocol with non-composite authentication, as defined in {{Section 4 of I-D.ietf-pquip-pqt-hybrid-terminology}}. In this approach, two single-algorithm certificate chains are used in parallel. When X.509 certificates are employed, each chain follows the standard PKI structure, and both chains together provide hybrid assurance without modifying the X.509 certificate format. While this method does not produce a single composite digital signature, it ensures that both certificate chains are presented in the IKE_AUTH exchange, validated according to standard PKIX rules, and that each corresponding signature is computed over the IKEv2 signed octets, as defined in Section 2.15 of {{RFC7296}}, thereby cryptographically binding both certificates to the IKE SA.
+2. Dual certificates: one with a traditional algorithm key and one with a PQC algorithm key. This method exemplifies a PQ/T hybrid protocol with non-composite authentication, as defined in {{Section 4 of I-D.ietf-pquip-pqt-hybrid-terminology}}. In this approach, two single-algorithm certificate chains are used in parallel. Each chain follows the standard PKI structure, and both chains together provide hybrid assurance without modifying the X.509 certificate format. While this method does not produce a single composite  signature, it ensures that both certificate chains are presented in the IKE_AUTH exchange, validated according to standard PKIX rules, and that each corresponding signature is computed over the IKEv2 signed octets, as defined in Section 2.15 of {{RFC7296}}, thereby cryptographically binding both certificates to the IKE SA.
 
 # Conventions and Definitions
 
@@ -175,7 +173,7 @@ HDR, SK {IDi, CERT+, [CERTREQ,]
 
 # Composite Certificate
 
-This draft extends and complements {{!PQC-AUTH=I-D.ipsecme-ikev2-pqc-auth}} which defines how to use Post-Quantum Cryptographic (PQC) signature algorithms (such as ML-DSA) in IKEv2 authentication. Both drafts share the same overarching goal: 
+This draft extends and complements {{!PQC-AUTH=I-D.ipsecme-ikev2-pqc-auth}} which defines how to use Post-Quantum Cryptographic (PQC) signature algorithms (such as ML-DSA and SLH-DSA) in IKEv2 authentication. Both drafts share the same overarching goal: 
 
 Enable IKEv2 to authenticate peers using PQC signature algorithms, ensuring security against quantum-capable adversaries.
 
@@ -191,18 +189,18 @@ IKEv2 can use arbitrary signature algorithms as described in {{RFC7427}}, where 
 
 For composite signatures, a single AlgorithmIdentifier describes a composite public key and a composite signature that combines multiple constituent algorithms (e.g., a traditional and a PQC algorithm) in accordance with {{I-D.ietf-lamps-pq-composite-sigs}}. This allows a single certificate and AUTH payload to provide hybrid assurance without requiring multiple exchanges.
 
-AlgorithmIdentifier ASN.1 objects are used to uniquely identify both individual PQC algorithms and composite schemes, including the full parameter set for each constituent algorithm. This ensures unambiguous selection and verification of composite signature during authentication.
+AlgorithmIdentifier ASN.1 objects are used to uniquely identify  composite schemes, including the full parameter set for each constituent algorithm. This ensures unambiguous selection and verification of composite signature during authentication.
 
 The signature MUST be computed and verified as specified in Section 2.15 of {{RFC7296}}. The Composite-ML-DSA.Sign function, defined in {{I-D.ietf-lamps-pq-composite-sigs}}, will be used by the sender to compute the signature field of the IKEv2 AUTH payload. Conversely, the Composite-ML-DSA.Verify function, also defined in
 {{I-D.ietf-lamps-pq-composite-sigs}}, will be used by the receiver to verify the signature field of the AUTH payload.
 
 # Dual Certificate Hybrid Authentication
 
-This section describes how this draft leverages the mechanisms defined in {{?RFC4739}} to enable PQ/T hybrid authentication in IKEv2 without requiring changes to the base protocol.
+This section describes how this draft leverages the mechanisms defined in {{?RFC4739}} to enable PQ/T hybrid authentication in IKEv2.
 
 When using dual certificates, each peer performs multiple rounds of authentication as specified in {{?RFC4739}}:
 
-* During capability negotiation, each peer indicates support for multiple authentications by including the MULTIPLE_AUTH_SUPPORTED notification in the initial exchanges.
+* During capability negotiation, each peer indicates support for multiple authentications by including the MULTIPLE_AUTH_SUPPORTED notification in the initial key exchange.
 * During the first IKE_AUTH exchange, the ANOTHER_AUTH_FOLLOWS notification is included to indicate that a subsequent authentication round will follow.
 
 The authentication process is as follows:
@@ -223,9 +221,8 @@ Each party validates both authentication rounds. If either round fails, the IKE 
 
 - IKE_SA_INIT: ECDH exchange, MULTIPLE_AUTH_SUPPORTED  
 - IKE_SA_INTERMEDIATE: ML-KEM exchange  
-- First IKE_AUTH: ID payload, traditional CERT, traditional AUTH, ANOTHER_AUTH_FOLLOWS
+- First IKE_AUTH: traditional CERT, traditional AUTH, ANOTHER_AUTH_FOLLOWS
 - Second IKE_AUTH: PQC CERT, PQC AUTH
-
 
 # Comparison of Composite and Dual Certificate Approaches
 
@@ -239,10 +236,12 @@ Advantages:
 - A single composite signature reduces protocol message size compared to transmitting multiple separate signatures.
 - No need to manage or validate multiple parallel certificate chains.
 - Provides an integrated hybrid assurance model within a single certificate.
+- No additional round-trip times (RTTs) are introduced.
+- No changes to the base protocol are required to support the composite signature approach.
 
 Disadvantages:
 
-- Requires endpoints and relying parties to support composite public keys and composite signature verification, which may not yet be widely deployed.
+- Requires endpoints, relying parties and CAs to support composite public keys and composite signature verification, which may not yet be widely deployed.
 - Introduces new certificate formats and verification logic that will need updates to PKI.
 
 
@@ -251,15 +250,13 @@ Disadvantages:
 Advantages:
 
 - Uses standard, single-algorithm X.509 certificates and chains, maximizing compatibility with existing PKI infrastructures.
-- Facilitates incremental deployment where some systems may only support classical or post-quantum algorithms.
-- Maintains clear separation between traditional and post-quantum keys and policies.
-- certificate validation logic without requiring composite key support.
+- Maintains clear separation between traditional and post-quantum keys.
+- No changes to certificate validation logic.
 
 Disadvantages:
 
 - Increases protocol message size due to the transmission of multiple certificate chains and signatures.
 - Requires management of multiple certificates.
-- Increases handshake latency compared to a single certificate chain.
 - Requires support of {{?RFC4739}}.
 
 # Security Considerations
