@@ -233,7 +233,7 @@ This section summarizes the advantages and disadvantages of using composite cert
 Advantages:
 
 - A single certificate chain is used for both classical and post-quantum keys, simplifying certificate management.
-- A single composite signature reduces protocol message size compared to transmitting multiple separate signatures.
+- A single composite signature, rooted in one intermediate certificate chain, reduces protocol message size compared to transmitting multiple separate signatures, each of which would require its own certificate chain.
 - No need to manage or validate multiple parallel certificate chains.
 - Provides an integrated hybrid assurance model within a single certificate.
 - No additional round-trip times (RTTs) are introduced.
@@ -243,6 +243,7 @@ Disadvantages:
 
 - Requires endpoints, relying parties and CAs to support composite public keys and composite signature verification, which may not yet be widely deployed.
 - Introduces new certificate formats and verification logic that will need updates to PKI.
+- It involves three transition paths, traditional only, composite, and PQC only, whereas the dual certificate approach requires only two (traditional and PQC).
 
 
 ## Dual Certificates
